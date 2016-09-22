@@ -1,47 +1,63 @@
-{-| Client functionality for the <http://wiki.ros.org/ROS/Master_API ROS Master API>
--}
+-- |
+-- Module      :  Robotics.ROS.Graph.Master
+-- Copyright   :  Anthony Cowley 2010
+--                Alexander Krupenkin 2016
+-- License     :  BSD3
+--
+-- Maintainer  :  mail@akru.me
+-- Stability   :  experimental
+-- Portability :  POSIX / WIN32
+--
+-- Client functionality for the <http://wiki.ros.org/ROS/Master_API ROS Master API>.
+--
 module Robotics.ROS.Graph.Master where
 
-import Network.XmlRpc.Client
-import Robotics.ROS.Types
-import Network.XmlRpc.Internals (fromValue, toValue)
+import           Robotics.ROS.Graph.Internal
+import           Network.XmlRpc.Client
+import           Robotics.ROS.Types
+import qualified Data.Text as T
 
--- |Subscribe the caller to the specified topic. In addition to
+-- | Subscribe the caller to the specified topic. In addition to
 -- receiving a list of current publishers, the subscriber will also
--- receive notifications of new publishers via the publisherUpdate
--- API. Takes the URI of the master, the caller_id, the topic name,
--- the topic type (must be a package-resource name, i.e. the .msg
--- name), and the API URI of the subscriber to register (used for new
--- publisher notifications). Returns a list of XML-RPC API URIs for
--- nodes currently publishing the specified topic.
-registerSubscriber :: URI -> String -> TopicName -> TopicType -> String -> 
-                      RPCResult [String]
-registerSubscriber = flip remote "registerSubscriber"
+-- receive notifications of new publishers via the publisherUpdate API.
+registerSubscriber :: URI               -- ^ URI of ROS master
+                   -> CallerID          -- ^ Caller ID
+                   -> TopicName         -- ^ Topic name to register
+                   -> TopicType         -- ^ Topic type, e.g. std_msgs/Int8
+                   -> URI               -- ^ API URI of subscriber
+                   -> XReturn [URI]     -- ^ List of XML-RPC API URIs of publishers
+registerSubscriber url = remote (T.unpack url) "registerSubscriber"
 
--- |Unregister the caller as a subscriber of the topic. Takes the URI
--- of the master, the caller_id, the topic name, and the API URI of
--- the subscriber to unregister. Returns zero if the caller was not
--- registered as a subscriber.
-unregisterSubscriber :: URI -> String -> TopicName -> String -> 
-                        RPCResult Int
-unregisterSubscriber = flip remote "unregisterSubscriber"
+-- | Unregister the caller as a subscriber of the topic.
+unregisterSubscriber :: URI             -- ^ URI of ROS master
+                     -> CallerID        -- ^ Caller ID
+                     -> TopicName       -- ^ Topic name to unregister
+                     -> URI             -- ^ API URI of subscriber
+                     -> XReturn Int     -- ^ Zero when all done
+unregisterSubscriber url = remote (T.unpack url) "unregisterSubscriber"
 
--- |Register the caller as a publisher the topic. Takes the URI of the
--- master, the caller_id, the topic name, the topic type (must be a
--- package-resource name, i.e. the .msg name), and the API URI of the
--- publisher to register. Returns a list of the XML-RPC URIs of
--- current subscribers of the topic.
-registerPublisher :: URI -> String -> TopicName -> TopicType -> URI -> 
-                     RPCResult [String]
-registerPublisher = flip remote "registerPublisher"
+-- | Register the caller as a publisher the topic.
+registerPublisher :: URI                -- ^ URI of ROS master
+                  -> CallerID           -- ^ Caller ID
+                  -> TopicName          -- ^ Topic name to register
+                  -> TopicType          -- ^ Topic type, e.g. std_msgs/Int8
+                  -> URI                -- ^ API URI of publisher
+                  -> XReturn [URI]      -- ^ List of XML-RPC API URIs of subscribers
+registerPublisher url = remote (T.unpack url) "registerPublisher"
 
--- |Unregister the caller as a publisher of the topic. Takes the URI of
--- the master, caller_id, the topic name, and the API URI of the
--- publisher to unregister. Returns zero if the caller was not
--- registered as a publisher.
-unregisterPublisher :: URI -> String -> TopicName -> URI -> RPCResult Int
-unregisterPublisher = flip remote "unregisterPublisher"
+-- | Unregister the caller as a publisher of the topic.
+unregisterPublisher :: URI              -- ^ URI of ROS master
+                    -> CallerID         -- ^ Caller ID
+                    -> TopicName        -- ^ Topic name to unregister
+                    -> URI              -- ^ API URI of publisher
+                    -> XReturn Int      -- ^ Zero when all done
+unregisterPublisher url = remote (T.unpack url) "unregisterPublisher"
 
-requestTopicClient :: URI -> CallerID -> TopicName -> [[String]] -> 
-                      RPCResult (String, String, Int)
+{- What is it?
+requestTopicClient :: URI
+                   -> CallerID
+                   -> TopicName
+                   -> [[String]]
+                   -> XReturn (String, String, Int)
 requestTopicClient = flip remote "requestTopic"
+-}

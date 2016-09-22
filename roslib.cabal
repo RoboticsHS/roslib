@@ -1,8 +1,8 @@
 name:                roslib
 version:             0.1.0.0
-synopsis:            Tight ROS support library for Haskell
+synopsis:            ROS client library for Haskell
 description:         Please see README.md
-homepage:            https://github.com/akru/roslib#readme
+homepage:            https://github.com/RoboticsHS/roslib#readme
 license:             BSD3
 license-file:        LICENSE
 author:              Alexander Krupenkin
@@ -16,48 +16,42 @@ library
   hs-source-dirs:      src
   exposed-modules:     Robotics.ROS
                      , Robotics.ROS.Time
+                     , Robotics.ROS.Graph
   other-modules:       Robotics.ROS.Types
-                     , Robotics.ROS.Graph.Stats
+--                     , Robotics.ROS.Graph.Stats
                      , Robotics.ROS.Graph.Slave
+                     , Robotics.ROS.Graph.Slave.Class
+                     , Robotics.ROS.Graph.Slave.Server
                      , Robotics.ROS.Graph.Master
-                     , Robotics.ROS.Graph.ParameterServer
-                     , Robotics.ROS.Node.ConnectionHeader
-                     , Robotics.ROS.Node.ArgRemapping
-                     , Robotics.ROS.Node.ROSTCP
-                     , Robotics.ROS.Node.Slave
-                     , Robotics.ROS.Node.Type
-                     , Robotics.ROS.Node
-  build-depends:       base                 >= 4.7    && < 5
-                     , time                 >= 1.5    && < 2
-                     , unix                 >= 2.7    && < 3
-                     , stm                  >= 2.4    && < 3
-                     , mtl                  >= 2.2    && < 3
-                     , haxr                 >= 3000.11.1.6
-                     , async                >= 2.1    && < 3
-                     , parsec               >= 3.1    && < 4
-                     , binary               >= 0.7    && < 1
-                     , conduit              >= 1.2    && < 2
-                     , conduit-extra        >= 1.1    && < 2
-                     , bytestring           >= 0.10   && < 1
-                     , containers           >= 0.5.6  && < 0.6
-                     , hostname             >= 1.0    && < 2
-                     , snap-core            >= 0.9    && < 1
-                     , snap-server          >= 0.9    && < 1
-                     , utf8-string          >= 1.0    && < 2
-                     , transformers         >= 0.4.2  && < 0.5
-                     , streaming-commons    >= 0.1.15 && < 0.2
+                     , Robotics.ROS.Graph.Internal
+                     , Robotics.ROS.Graph.Parameter
+--                     , Robotics.ROS.Node.ConnectionHeader
+--                     , Robotics.ROS.Node.ArgRemapping
+--                     , Robotics.ROS.Node.ROSTCP
+--                     , Robotics.ROS.Node.Slave
+--                     , Robotics.ROS.Node.Type
+--                     , Robotics.ROS.Node
+  build-depends:       base     >= 4.7 && < 5
+                     , mtl
+                     , time
+                     , text
+                     , haxr
+                     , async
+                     , rosmsg
+                     , hostname
+                     , snap-core
+                     , containers
+                     , snap-server 
+                     , transformers
+                     , streaming-commons
+  if os(windows)
+    build-depends:     win32
+  else
+    build-depends:     unix
 
-  default-language:    Haskell2010
-
-test-suite genhs-test
-  type:                exitcode-stdio-1.0
-  hs-source-dirs:      test
-  main-is:             Spec.hs
-  build-depends:       base
-                     , roshs
-  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  default-extensions:  OverloadedStrings
   default-language:    Haskell2010
 
 source-repository head
   type:     git
-  location: https://github.com/akru/roshs
+  location: https://github.com/RoboticsHS/roslib
