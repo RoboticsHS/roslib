@@ -8,7 +8,8 @@
 -- Stability   :  experimental
 -- Portability :  POSIX / WIN32
 --
--- ROS slave API implemented in typeclass interface.
+-- Client functionality for the <http://wiki.ros.org/ROS/Slave_API ROS Slave API>.
+-- ROS slave API typeclass.
 --
 module Robotics.ROS.Graph.Slave.Class where
 
@@ -16,7 +17,6 @@ import Control.Monad.IO.Class (MonadIO(..))
 import Network.XmlRpc.Internals (Value)
 import Robotics.ROS.Graph.Internal
 import Control.Monad (liftM)
-import Robotics.ROS.Types
 import Data.Text (Text)
 
 #ifdef mingw32_HOST_OS
@@ -36,7 +36,7 @@ getPid' = returnXR Ok =<< liftIO getPID
 -- | ROS compatible protocol description.
 -- [ProtocolName, ProtocolParam1, ProtocolParam2...N]
 -- @protocolParams@ may be an empty list if there are no compatible protocols.
-type Protocol = [Text]
+type TransportArgs = [Text]
 
 -- | Transport topic statistics.
 -- Stats is of the form [publishStats, subscribeStats, serviceStats] where
@@ -51,7 +51,7 @@ type Protocol = [Text]
 -- dropEstimate: -1 if no estimate.
 --
 type BusStats = ( [(TopicName, Int, [(Int, Int, Int, Bool)])]  -- Publish stats
-                , [(TopicName, Int, [(Int, Int, Int, Bool)])]  -- Subscribe stats
+                , [(TopicName, [(Int, Int, Int, Bool)])]       -- Subscribe stats
                 , (Int, Int, Int) )                            -- Service stats
 
 -- | Transport connection information.
@@ -77,38 +77,38 @@ type BusInfo = [(Int, URI, Text, Text, TopicName)]
 
 -- | ROS slave API
 class Slave a where
+    -- | Retrieve transport/topic statistics.
     getBusStats      :: a -> CallerID -> XReturn BusStats
-    -- ^ Retrieve transport/topic statistics.
 
+    -- | Retrieve transport/topic connection information.
     getBusInfo       :: a -> CallerID -> XReturn BusInfo
-    -- ^ Retrieve transport/topic connection information.
 
+    -- | Get the URI of the master node.
     getMasterUri     :: a -> CallerID -> XReturn URI
-    -- ^ Get the URI of the master node.
 
+    -- | Stop this server.
     shutdown         :: a -> CallerID -> Text -> XReturn Int
-    -- ^ Stop this server.
 
+    -- | Get the PID of this server.
     getPid           :: a -> CallerID -> XReturn Int
-    -- ^ Get the PID of this server.
     getPid _ _ = getPid'
 
+    -- | Retrieve a list of topics that this node subscribes.
     getSubscriptions :: a -> CallerID -> XReturn [(TopicName, TopicType)]
-    -- ^ Retrieve a list of topics that this node subscribes.
 
+    -- | Retrieve a list of topics that this node publishes.
     getPublications  :: a -> CallerID -> XReturn [(TopicName, TopicType)]
-    -- ^ Retrieve a list of topics that this node publishes.
 
+    -- | Callback from master with updated value of subscribed parameter.
     paramUpdate      :: a -> CallerID -> ParamName -> Value -> XReturn Int
-    -- ^ Callback from master with updated value of subscribed parameter.
 
+    -- | Callback from master of current publisher list for specified topic.
     publisherUpdate  :: a -> CallerID -> TopicName -> [URI] -> XReturn Int
-    -- ^ Callback from master of current publisher list for specified topic.
 
-    requestTopic     :: a -> CallerID -> TopicName -> [Protocol] -> XReturn [Protocol]
-    -- ^ Publisher node API method called by a subscriber node. This requests
+    -- | Publisher node API method called by a subscriber node. This requests
     -- that source allocate a channel for communication. Subscriber provides a
     -- list of desired protocols for communication. Publisher returns the
     -- selected protocol along with any additional params required for
     -- establishing connection. For example, for a TCP/IP-based connection,
     -- the source node may return a port number of TCP/IP server.
+    requestTopic     :: a -> CallerID -> TopicName -> [TransportArgs] -> XReturn TransportArgs

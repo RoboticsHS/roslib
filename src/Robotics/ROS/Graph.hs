@@ -13,8 +13,14 @@
 -- language implementations.
 --
 module Robotics.ROS.Graph (
+  -- * Common types
+    TopicName
+  , TopicType
+  , ParamName
+  , CallerID
+  , URI
   -- * Parameter server API
-    setParam
+  , setParam
   , getParam
   , deleteParam
   , searchParam
@@ -29,9 +35,16 @@ module Robotics.ROS.Graph (
   , unregisterPublisher
   -- * ROS slave API
   , Slave(..)
-  , runSlave
+  , slaveServer
+  -- * XML-RPC protocol helpers
+  , XReturn
+  , XReturnCode(..)
+  , handleXR
+  , returnXR
   ) where
 
-import Robotics.ROS.Graph.Parameter
 import Robotics.ROS.Graph.Master
-import Robotics.ROS.Graph.Slave
+import Robotics.ROS.Graph.Internal
+import Robotics.ROS.Graph.Parameter
+import Robotics.ROS.Graph.Slave.Class
+import Robotics.ROS.Graph.Slave.Server

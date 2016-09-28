@@ -15,34 +15,51 @@ cabal-version:       >=1.10
 library
   hs-source-dirs:      src
   exposed-modules:     Robotics.ROS
+                     -- ROS time utils
                      , Robotics.ROS.Time
+                     -- ROS Graph API
                      , Robotics.ROS.Graph
-  other-modules:       Robotics.ROS.Types
---                     , Robotics.ROS.Graph.Stats
-                     , Robotics.ROS.Graph.Slave
-                     , Robotics.ROS.Graph.Slave.Class
-                     , Robotics.ROS.Graph.Slave.Server
                      , Robotics.ROS.Graph.Master
                      , Robotics.ROS.Graph.Internal
                      , Robotics.ROS.Graph.Parameter
---                     , Robotics.ROS.Node.ConnectionHeader
+                     , Robotics.ROS.Graph.Slave.Class
+                     , Robotics.ROS.Graph.Slave.Server
+                     -- ROS message transport
+                     , Robotics.ROS.Transport
+                     , Robotics.ROS.Transport.Class
+                     , Robotics.ROS.Transport.Codec
+                     , Robotics.ROS.Transport.ROSTCP
+--                     , Robotics.ROS.Transport.ROSUDP
+                     , Robotics.ROS.Transport.Accounting
+                     , Robotics.ROS.Transport.Statistics
+                     , Robotics.ROS.Transport.ConnectionHeader
+
 --                     , Robotics.ROS.Node.ArgRemapping
---                     , Robotics.ROS.Node.ROSTCP
 --                     , Robotics.ROS.Node.Slave
 --                     , Robotics.ROS.Node.Type
 --                     , Robotics.ROS.Node
+
   build-depends:       base     >= 4.7 && < 5
                      , mtl
                      , time
                      , text
                      , haxr
+                     , pipes
                      , async
                      , rosmsg
+                     , binary
                      , hostname
                      , snap-core
+                     , bytestring
                      , containers
+                     , pipes-parse
+                     , lens-family
                      , snap-server 
+                     , monad-logger
                      , transformers
+                     , pipes-binary
+                     , pipes-network
+                     , pipes-bytestring
                      , streaming-commons
   if os(windows)
     build-depends:     win32

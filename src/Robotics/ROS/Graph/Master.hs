@@ -14,7 +14,6 @@ module Robotics.ROS.Graph.Master where
 
 import           Robotics.ROS.Graph.Internal
 import           Network.XmlRpc.Client
-import           Robotics.ROS.Types
 import qualified Data.Text as T
 
 -- | Subscribe the caller to the specified topic. In addition to

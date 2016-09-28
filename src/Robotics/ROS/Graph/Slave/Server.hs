@@ -1,4 +1,15 @@
-module Robotics.ROS.Graph.Slave.Server (runSlave) where
+-- |
+-- Module      :  Robotics.ROS.Graph.Slave.Server
+-- Copyright   :  Alexander Krupenkin 2016
+-- License     :  BSD3
+--
+-- Maintainer  :  mail@akru.me
+-- Stability   :  experimental
+-- Portability :  POSIX / WIN32
+--
+-- ROS slave XML-RPC server.
+--
+module Robotics.ROS.Graph.Slave.Server (slaveServer) where
 
 import Snap.Http.Server (defaultConfig, setPort, Config, ConfigLog(..),
                          setVerbose, setAccessLog, setErrorLog,
@@ -39,8 +50,8 @@ quiet port = setAccessLog ConfigNoLog .
 
 -- | Run ROS 'Slave' server and return 'Async' of server thread
 -- and XML-RPC slave 'URI'.
-runSlave :: Slave a => a -> IO (Async (), URI)
-runSlave s = do
+slaveServer :: Slave a => a -> IO (Async (), URI)
+slaveServer s = do
     host <- getHostName
     port <- getUnassignedPort
     let uri = concat ["http://", host, ":", show port]

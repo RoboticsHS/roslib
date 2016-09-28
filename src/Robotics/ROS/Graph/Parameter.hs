@@ -1,6 +1,7 @@
 -- |
 -- Module      :  Robotics.ROS.Graph.Parameter
--- Copyright   :  Alexander Krupenkin 2016
+-- Copyright   :  Anthony Cowley 2010
+--                Alexander Krupenkin 2016
 -- License     :  BSD3
 --
 -- Maintainer  :  mail@akru.me

@@ -28,6 +28,12 @@ type CallerID = Text
 -- | ROS node parameter name.
 type ParamName = Text
 
+-- | ROS topic name.
+type TopicName = Text
+
+-- | ROS topic type string, e.g std_msgs/UInt8.
+type TopicType = Text
+
 -- | ROS master XML-RPC result type.
 -- Return values are lists in the format: [statusCode, statusMessage, value]
 --
@@ -62,11 +68,11 @@ handleXR :: (MonadIO m, MonadError Text m, XmlRpcType a)
 handleXR mr = do
     (code, str, v) <- liftIO mr
     case toEnum (code + 1) of
-        Error -> throwError ("ROS master error: " <> str)
-        Ok    -> return v
+        Ok -> return v
+        _  -> throwError ("ROS master error: " <> str)
 
 -- | The 'XResult' creator from error code and value.
 returnXR :: XmlRpcType a => XReturnCode -> a -> XReturn a
 returnXR c v = case c of
-    Ok    -> return (1, "", v)
-    Error -> return (0, "An error occured", v)
+    Ok -> return (1, "", v)
+    _  -> return (0, "An error occured", v)
